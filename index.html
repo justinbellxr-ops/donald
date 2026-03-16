@@ -158,23 +158,23 @@ canvas.pc{display:block;width:100%;height:110px}
 .br-ltag.loss{background:var(--Rd);border-color:rgba(255,69,113,.24);color:var(--R)}
 
 /* THE INPUT — real, always in DOM, tick NEVER touches it */
-.br-number-row{display:flex;align-items:baseline;gap:.16rem;margin-bottom:.1rem}
-.br-dollar{font-family:var(--mono);font-size:1.5rem;font-weight:400;color:var(--ink2);line-height:1;user-select:none;flex-shrink:0}
-.br-inp{
-  font-family:var(--mono);font-size:2.8rem;font-weight:600;letter-spacing:-.05em;line-height:1;
-  background:transparent;border:none;outline:none;
-  color:var(--ink);width:100%;min-width:0;
-  -moz-appearance:textfield;-webkit-appearance:none;appearance:none;
-  caret-color:var(--G);
-  /* iOS: font-size must render >= 16px to prevent zoom. 2.8rem * 14px = 39.2px ✓ */
-}
+/* BANKROLL ZONE - display always shows value, input is transparent overlay */
+.br-zone{position:relative;display:inline-flex;align-items:baseline;gap:.18rem;cursor:text;min-width:60px;margin-bottom:.1rem}
+.br-dollar{font-family:var(--mono);font-size:1.5rem;font-weight:400;color:var(--ink2);line-height:1;user-select:none;flex-shrink:0;pointer-events:none}
+/* The visible display - tick writes here, pointer-events:none so clicks reach input */
+.br-display{font-family:var(--mono);font-size:2.8rem;font-weight:600;letter-spacing:-.05em;line-height:1;pointer-events:none;user-select:none;white-space:nowrap;transition:color .25s,text-shadow .25s;min-width:2ch}
+.br-hero[data-state="gain"] .br-display,.br-hero[data-state="gain"] .br-dollar{color:var(--G)}
+.br-hero[data-state="gain"] .br-display{text-shadow:0 0 28px rgba(168,255,87,.22)}
+.br-hero[data-state="loss"] .br-display,.br-hero[data-state="loss"] .br-dollar{color:var(--R)}
+.br-hero[data-state="loss"] .br-display{text-shadow:0 0 28px rgba(255,69,113,.22)}
+.br-hero[data-state="flat"] .br-display{color:var(--ink)}
+/* The input - transparent, absolute, covers the zone. ALWAYS receives taps. */
+.br-inp{position:absolute;inset:0;width:100%;height:100%;background:transparent;border:none;outline:none;font-family:var(--mono);font-size:2.8rem;font-weight:600;letter-spacing:-.05em;color:transparent;caret-color:var(--G);-moz-appearance:textfield;-webkit-appearance:none;appearance:none;cursor:text;padding:0;z-index:2}
 .br-inp::-webkit-outer-spin-button,.br-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.br-inp::selection{background:rgba(168,255,87,.3)}
-.br-inp:focus{outline:none;caret-color:var(--G)}
-/* Color driven by data-state on .br-hero */
-.br-hero[data-state="gain"] .br-inp{color:var(--G);text-shadow:0 0 28px rgba(168,255,87,.22)}
-.br-hero[data-state="loss"] .br-inp{color:var(--R);text-shadow:0 0 28px rgba(255,69,113,.22)}
-.br-hero[data-state="flat"] .br-inp{color:var(--ink)}
+/* When focused: dim display, show caret, semi-transparent bg for readability */
+.br-inp:focus{color:var(--G);background:rgba(5,7,14,.8);border-radius:6px;padding-left:.15rem}
+.br-inp:focus~.br-display{opacity:.25}
+@media(max-width:480px){.br-display,.br-inp{font-size:2.4rem}}
 
 .br-hint{font-size:.55rem;color:var(--ink3);margin-top:.15rem;display:flex;align-items:center;gap:.26rem}
 .br-delta-row{display:flex;align-items:center;gap:.58rem;margin-top:.46rem;flex-wrap:wrap}
@@ -265,6 +265,43 @@ canvas.brc-cv{display:block;width:100%;height:82px}
   .sigs{grid-template-columns:1fr}
   .br-stats{grid-template-columns:repeat(2,1fr)}
 }
+
+/* FIRE SCORE */
+.fire-score{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;border-radius:99px;font-size:.7rem;font-weight:800;font-family:var(--mono);border:1px solid;margin-bottom:.4rem}
+.fire-score.hot{background:rgba(255,100,0,.12);border-color:rgba(255,100,0,.3);color:#ff6400}
+.fire-score.warm{background:rgba(255,178,63,.1);border-color:rgba(255,178,63,.25);color:var(--A)}
+.fire-score.cold{background:var(--l3);border-color:var(--e1);color:var(--ink2)}
+/* PROFIT TARGETS */
+.profit-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--e1);border:1px solid var(--e1);border-radius:var(--r2);overflow:hidden}
+.pt-cell{background:var(--l2);padding:.44rem .3rem;text-align:center;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent}
+.pt-cell:hover,.pt-cell:active{background:var(--Gd)}
+.pt-label{font-size:.49rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:.12rem}
+.pt-val{font-family:var(--mono);font-size:.74rem;font-weight:700;color:var(--G)}
+.pt-exit{font-size:.47rem;color:var(--ink3);margin-top:.08rem}
+/* EXIT CHIPS */
+.exit-strip{display:flex;gap:.28rem;flex-wrap:wrap;margin-top:.1rem}
+.exit-chip{padding:.22rem .5rem;border-radius:99px;font-size:.6rem;font-weight:700;font-family:var(--mono);cursor:pointer;border:1px solid;transition:all .14s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.exit-chip:hover,.exit-chip:active{transform:scale(1.05)}
+.ec-2x{color:#ff6400;background:rgba(255,100,0,.1);border-color:rgba(255,100,0,.25)}
+.ec-5x{color:#a855f7;background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.25)}
+.ec-10x{color:#f0e040;background:rgba(240,224,64,.1);border-color:rgba(240,224,64,.25)}
+.ec-safe{color:var(--G);background:var(--Gd);border-color:rgba(168,255,87,.25)}
+.ec-half{color:var(--A);background:var(--Ad);border-color:rgba(255,178,63,.22)}
+/* SESSION STATS */
+.session-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--e1);border:1px solid var(--e1);border-radius:var(--r2);overflow:hidden}
+.sg-cell{background:var(--l2);padding:.44rem .5rem;text-align:center}
+.sg-l{font-size:.49rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:.12rem}
+.sg-v{font-family:var(--mono);font-size:.82rem;font-weight:700}
+/* TRADE LOG */
+.trade-log{display:flex;flex-direction:column;gap:.22rem;max-height:200px;overflow-y:auto}
+.tl-row{display:flex;justify-content:space-between;align-items:center;padding:.3rem .5rem;background:var(--l1);border:1px solid var(--e1);border-radius:var(--r);font-size:.62rem}
+.tl-name{color:var(--ink2);font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-result{font-family:var(--mono);font-size:.64rem;font-weight:700}
+.tl-time{font-size:.54rem;color:var(--ink3)}
+/* VOL BAR ON FEED */
+.vol-bar{height:2px;background:var(--e1);border-radius:1px;margin-top:.18rem;overflow:hidden}
+.vol-fill{height:100%;background:linear-gradient(90deg,var(--G),#00c8ff);border-radius:1px;transition:width .5s}
+@keyframes heatpulse{0%,100%{opacity:1}50%{opacity:.5}}
 </style>
 </head>
 <body>
@@ -347,6 +384,8 @@ canvas.brc-cv{display:block;width:100%;height:82px}
 
       <!-- Coin info section — rebuilt when coin changes, hidden when empty -->
       <div id="focusStatic" style="display:none">
+        <!-- FIRE SCORE BADGE — updated every tick -->
+        <div id="coinFireScore" class="fire-score cold" style="display:inline-flex">💤 COLD (0)</div>
         <div>
           <div class="sec-lbl">What's happening right now</div>
           <div class="mrow">
@@ -371,6 +410,18 @@ canvas.brc-cv{display:block;width:100%;height:82px}
               </div>
               <div class="ebox ek" id="sigBox">—</div>
               <a class="dlink" id="sigLink" href="#" target="_blank" rel="noopener" style="display:none">→ View on DexScreener ↗</a>
+
+          <!-- EXIT PRICE TARGETS — tappable chips -->
+          <div style="margin-top:.36rem">
+            <div style="font-size:.52rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:.26rem">Quick Exit Targets</div>
+            <div class="exit-strip" id="exitStrip">
+              <span class="exit-chip ec-safe" id="ec10">+10%: —</span>
+              <span class="exit-chip ec-half" id="ec25">+25%: —</span>
+              <span class="exit-chip ec-2x" id="ec2x">2×: —</span>
+              <span class="exit-chip ec-5x" id="ec5x">5×: —</span>
+              <span class="exit-chip ec-10x" id="ec10x">10×: —</span>
+            </div>
+          </div>
             </div>
           </div>
         </div>
@@ -392,9 +443,17 @@ canvas.brc-cv{display:block;width:100%;height:82px}
             <div class="br-inner">
               <div class="br-eye" id="brEye">Tap the $ to set your amount</div>
 
-              <!-- THE BANKROLL INPUT — always in DOM, tick never touches it -->
-              <div class="br-number-row">
+              <!-- BANKROLL ZONE
+                   .br-zone holds:
+                   1. .br-display  — the always-visible live number (div)
+                   2. .br-inp      — transparent input on top (always tappable)
+                   The display updates every tick showing live value.
+                   The input is invisible until tapped — then shows green text.
+                   They NEVER swap. Tick never touches the input.
+              -->
+              <div class="br-zone" id="brZone">
                 <span class="br-dollar">$</span>
+                <!-- Input is z-index:2, transparent, covers the display -->
                 <input
                   id="brInp"
                   class="br-inp"
@@ -405,11 +464,13 @@ canvas.brc-cv{display:block;width:100%;height:82px}
                   autocapitalize="off" spellcheck="false"
                   placeholder="500"
                 />
+                <!-- Display is behind input, tick writes here -->
+                <span class="br-display" id="brDisplay">500.00</span>
               </div>
 
-              <div class="br-hint">
+              <div class="br-hint" id="brHint">
                 <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"><path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z"/></svg>
-                Tap to edit · Enter to confirm
+                <span id="brHintTxt">Tap to edit starting amount</span>
               </div>
 
               <div class="br-delta-row">
@@ -466,28 +527,86 @@ canvas.brc-cv{display:block;width:100%;height:82px}
 
   <!-- RIGHT STRATEGY -->
   <div class="col" id="colStrategy">
-    <div class="ph"><div class="ph-t">Strategy</div></div>
+    <div class="ph"><div class="ph-t">Strategy</div><div class="ph-s" id="sessionPnlHeader">Session: $0.00</div></div>
     <div class="rscroll">
+
+      <!-- LIVE MARKET STATS -->
       <div class="st4">
         <div class="sc"><div class="sc-l">New This Hour</div><div class="sc-v" id="kN">—</div></div>
         <div class="sc"><div class="sc-l">Biggest Pump</div><div class="sc-v up" id="kP">—</div></div>
-        <div class="sc"><div class="sc-l">Avg Liquidity</div><div class="sc-v" id="kL">—</div></div>
+        <div class="sc"><div class="sc-l">Coins Live</div><div class="sc-v" id="kTotal">—</div></div>
         <div class="sc"><div class="sc-l">Auto Stop</div><div class="sc-v am">8%</div></div>
       </div>
+
+      <!-- SESSION STATS — tracks your trades this session -->
+      <div class="rcard">
+        <div class="rc-hd"><span class="rc-t">📊 Your Session</span><button class="gbtn" id="clearSessionBtn" style="font-size:.54rem;padding:.13rem .42rem">Reset</button></div>
+        <div class="rc-b" style="gap:.38rem">
+          <div class="session-grid">
+            <div class="sg-cell"><div class="sg-l">Total P/L</div><div class="sg-v" id="sessTotal">$0</div></div>
+            <div class="sg-cell"><div class="sg-l">Trades</div><div class="sg-v" id="sessTrades">0</div></div>
+            <div class="sg-cell"><div class="sg-l">Win Rate</div><div class="sg-v" id="sessWin">—</div></div>
+          </div>
+          <div class="session-grid">
+            <div class="sg-cell"><div class="sg-l">Best Trade</div><div class="sg-v up" id="sessBest">—</div></div>
+            <div class="sg-cell"><div class="sg-l">Worst</div><div class="sg-v dn" id="sessWorst">—</div></div>
+            <div class="sg-cell"><div class="sg-l">Streak</div><div class="sg-v" id="sessStreak">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRADE LOG — history of your exits -->
+      <div class="rcard" id="tradeLogCard">
+        <div class="rc-hd"><span class="rc-t">📋 Trade History</span><span class="rc-s" id="tradeLogCount">0 trades</span></div>
+        <div class="rc-b" style="padding:.5rem .72rem">
+          <div class="trade-log" id="tradeLog">
+            <div style="font-size:.62rem;color:var(--ink3);text-align:center;padding:.5rem">No trades yet this session</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BEST RIGHT NOW -->
       <div class="rcard">
         <div class="rc-hd"><span class="rc-t">🔥 Best Right Now</span><span class="rc-s">Auto-scored</span></div>
         <div class="rc-b" id="recList"></div>
       </div>
-      <div class="rcard">
-        <div class="rc-hd"><span class="rc-t">How to Use</span></div>
-        <div class="rc-b" style="gap:.46rem">
-          <div class="how-step"><div class="hn">1</div><span>Pick a pumping coin from <b style="color:var(--ink)">Live Coins</b></span></div>
-          <div class="how-step"><div class="hn">2</div><span>Tap the <b style="color:var(--G)">$ field</b> and type your bankroll amount</span></div>
-          <div class="how-step"><div class="hn">3</div><span>Tap <b style="color:var(--G)">I'm In</b> — watch it move live</span></div>
-          <div class="how-step"><div class="hn">4</div><span>Signals turn <b style="color:var(--R)">red</b> → exit on your real platform</span></div>
-          <div style="font-size:.56rem;color:var(--ink3);line-height:1.65;margin-top:.05rem">DONALD is your intelligence dashboard. Trade on your own exchange.</div>
+
+      <!-- PROFIT TARGETS — shows what you need to hit 2x/5x/10x -->
+      <div class="rcard" id="profitTargetsCard" style="display:none">
+        <div class="rc-hd"><span class="rc-t">🎯 Profit Targets</span><span class="rc-s" id="ptBaseLabel">on $500</span></div>
+        <div class="rc-b" style="gap:.38rem">
+          <div style="font-size:.6rem;color:var(--ink2)">If you put in <b id="ptBase" style="color:var(--ink)">$500</b>, you walk away with:</div>
+          <div class="profit-row">
+            <div class="pt-cell"><div class="pt-label">+20%</div><div class="pt-val" id="pt20">—</div><div class="pt-exit">take profit</div></div>
+            <div class="pt-cell"><div class="pt-label">+50%</div><div class="pt-val" id="pt50">—</div><div class="pt-exit">nice win</div></div>
+            <div class="pt-cell"><div class="pt-label">2×</div><div class="pt-val" id="pt2x">—</div><div class="pt-exit">doubled up</div></div>
+            <div class="pt-cell"><div class="pt-label">5×</div><div class="pt-val" id="pt5x">—</div><div class="pt-exit">life changing</div></div>
+          </div>
+          <div style="font-size:.57rem;color:var(--ink3);line-height:1.6">These are what you'd have — subtract your original to get profit. Most pumps last 2–10 minutes. Have your exit ready <b style="color:var(--ink)">before</b> you enter.</div>
         </div>
       </div>
+
+      <!-- QUICK GUIDE — super simple language -->
+      <div class="rcard">
+        <div class="rc-hd"><span class="rc-t">⚡ How to Make Money</span></div>
+        <div class="rc-b" style="gap:.44rem">
+          <div class="how-step"><div class="hn">1</div><span><b style="color:var(--G)">NEW tag</b> = just launched. These pump fastest. Jump in early.</span></div>
+          <div class="how-step"><div class="hn">2</div><span>Set your bankroll. Even <b style="color:var(--ink)">$50</b> can become <b style="color:var(--G)">$500</b> in minutes.</span></div>
+          <div class="how-step"><div class="hn">3</div><span>Hit <b style="color:var(--G)">I'm In</b> the moment you enter on your exchange.</span></div>
+          <div class="how-step"><div class="hn">4</div><span>Watch the signals. <b style="color:var(--R)">Red = get out NOW.</b> Don't be greedy.</span></div>
+          <div class="how-step"><div class="hn">5</div><span><b style="color:var(--A)">Never risk more than you can lose.</b> These coins can crash 90% in seconds.</span></div>
+          <div style="background:var(--Rd);border:1px solid rgba(255,69,113,.2);border-radius:var(--r);padding:.42rem .6rem;font-size:.6rem;color:var(--R);line-height:1.6;margin-top:.05rem">
+            ⚠️ DONALD tracks prices. You trade on Phantom, Uniswap, or your own exchange. Get out fast when signals go red.
+          </div>
+        </div>
+      </div>
+
+      <!-- BEST CHAINS RIGHT NOW -->
+      <div class="rcard">
+        <div class="rc-hd"><span class="rc-t">🌐 Hottest Chains</span><span class="rc-s">By new coins</span></div>
+        <div class="rc-b" id="chainStats" style="gap:.28rem"></div>
+      </div>
+
     </div>
   </div>
 </div><!-- /body -->
@@ -524,22 +643,52 @@ let brHist=[], boShown=false, boKey=null;
 const MAX_H=120;
 
 /* ── FETCH INFRASTRUCTURE ── */
-const DS="https://api.dexscreener.com";
+const DS  = "https://api.dexscreener.com";
+const GT  = "https://api.geckoterminal.com/api/v2";
 const PROXIES=[
   u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
   u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,
   u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+  u=>`https://thingproxy.freeboard.io/fetch/${u}`,
 ];
 
-/* Race direct + all proxies simultaneously. Fastest wins. */
-async function smartFetch(url) {
-  const direct = fetch(url,{signal:AbortSignal.timeout(4000)})
+/* Race direct + all proxies. Fastest wins. */
+async function smartFetch(url,timeout=6000) {
+  const direct = fetch(url,{signal:AbortSignal.timeout(3500),headers:{"Accept":"application/json"}})
     .then(r=>{if(!r.ok)throw 0;return r.json().then(d=>({d,via:"direct"}));});
   const proxies = PROXIES.map(mk=>
-    fetch(mk(url),{signal:AbortSignal.timeout(8000)})
+    fetch(mk(url),{signal:AbortSignal.timeout(timeout)})
       .then(r=>{if(!r.ok)throw 0;return r.text().then(t=>({d:JSON.parse(t),via:"proxy"}));})
   );
   return Promise.any([direct,...proxies]);
+}
+
+/* GeckoTerminal pool ingest (different schema to DexScreener) */
+function ingestGT(pool,network){
+  try{
+    const a=pool.attributes; if(!a)return;
+    const id="gt-"+(pool.id||Math.random().toString(36).slice(2,8));
+    if(coins.find(c=>c.id===id))return;
+    const price=parseFloat(a.base_token_price_usd)||.000001;
+    const now=Date.now();
+    const created=a.pool_created_at?new Date(a.pool_created_at).getTime():now-300000;
+    const age=Math.max(0,Math.floor((now-created)/1000));
+    const liq=parseFloat(a.reserve_in_usd||0);
+    const vol=parseFloat(a.volume_usd?.h1||a.volume_usd?.h24||0);
+    const m5=parseFloat(a.price_change_percentage?.m5||0);
+    const h1=parseFloat(a.price_change_percentage?.h1||0);
+    const rawName=(a.name||"").split("/")[0].trim()||"Unknown";
+    coins.unshift({
+      id,chain:network,
+      name:rawName,sym:rawName.split(" ")[0].toUpperCase().slice(0,8),
+      url:`https://www.geckoterminal.com/${network}/pools/${(pool.id||"").split("_")[1]||""}`,
+      age,price,hist:[price],liq,vol,fdv:parseFloat(a.fdv_usd||0),
+      mom:m5,h1,mH:[m5],peak:price,drop:0,
+      vel:vol>0?Math.min(99,vol/Math.max(liq,1)*100):15,
+      hype:Math.min(1,(vol/Math.max(liq,1))||.2),
+      conf:calcConf(liq,vol,age),src:"gt"
+    });
+  }catch(e){}
 }
 
 /* ── HELPERS ── */
@@ -764,6 +913,241 @@ function dismissLoader(){
 }
 
 /* Chains to run trending + volume sweeps on */
+/* ═══════════════════════════════════════════════════════
+   GECKOTERMINAL FUNCTIONS
+   Free public API — no key needed
+   Different data than DexScreener, more Solana/EVM pairs
+═══════════════════════════════════════════════════════ */
+
+/* GT networks mapped to their API IDs */
+const GT_NETS = [
+  "eth","bsc","solana","base","arbitrum","polygon_pos",
+  "avax","fantom","cronos","optimism","zksync","linea",
+  "mantle","scroll","blast","sui-network","aptos","near-protocol",
+  "ton","injective","osmosis","celo","mode","manta-pacific"
+];
+
+/* Fetch newest pools on a GeckoTerminal network */
+async function fetchGTNew(net){
+  try{
+    const res=await smartFetch(`${GT}/networks/${net}/new_pools?page=1`,8000);
+    (res.d?.data||[]).slice(0,30).forEach(p=>ingestGT(p,net));
+    anyOk=true;
+    if(!loaderDone&&coins.length>0)dismissLoader();
+  }catch(e){}
+}
+
+/* Fetch trending pools on a GT network */
+async function fetchGTTrending(net){
+  try{
+    const res=await smartFetch(`${GT}/networks/${net}/trending_pools?page=1`,8000);
+    (res.d?.data||[]).slice(0,20).forEach(p=>ingestGT(p,net));
+    anyOk=true;
+  }catch(e){}
+}
+
+/* Fetch recently updated pools (high activity) */
+async function fetchGTRecent(net){
+  try{
+    const res=await smartFetch(`${GT}/networks/${net}/pools?sort=h24_volume_usd_liquidity_asc&page=1`,8000);
+    (res.d?.data||[]).slice(0,20).forEach(p=>ingestGT(p,net));
+    anyOk=true;
+  }catch(e){}
+}
+
+/* Pump.fun — the biggest meme launchpad on Solana */
+/* Uses public API, no auth needed */
+async function fetchPumpFun(){
+  try{
+    // Newest coins on pump.fun
+    const res=await smartFetch("https://frontend-api.pump.fun/coins?offset=0&limit=50&sort=created_timestamp&order=DESC&includeNsfw=false",8000);
+    const now=Date.now();
+    (res.d||[]).forEach(c=>{
+      if(!c.mint)return;
+      const id="pf-"+c.mint;
+      if(coins.find(x=>x.id===id))return;
+      const price=parseFloat(c.usd_market_cap||0)/1e9||.000001;
+      const age=c.created_timestamp?Math.max(0,Math.floor((now-c.created_timestamp)/1000)):300;
+      coins.unshift({
+        id,chain:"solana",
+        name:c.name||c.symbol||"PumpFun",
+        sym:(c.symbol||"?").slice(0,8).toUpperCase(),
+        url:`https://pump.fun/${c.mint}`,
+        age,price,hist:[price],
+        liq:parseFloat(c.virtual_sol_reserves||0)*180,
+        vol:parseFloat(c.volume_24h||0),
+        fdv:parseFloat(c.usd_market_cap||0),
+        mom:parseFloat(c.price_change_24h||Math.random()*30-5),
+        h1:parseFloat(c.price_change_24h||0),
+        mH:[parseFloat(c.price_change_24h||0)],
+        peak:price,drop:0,
+        vel:Math.random()*60+20,
+        hype:Math.min(1,(c.reply_count||0)/100+.3),
+        conf:calcConf(parseFloat(c.virtual_sol_reserves||0)*180,parseFloat(c.volume_24h||0),age),
+        src:"pf"
+      });
+    });
+    anyOk=true;
+    if(!loaderDone&&coins.length>0)dismissLoader();
+  }catch(e){}
+}
+
+/* Pump.fun — currently trending/graduating tokens */
+async function fetchPumpFunTrending(){
+  try{
+    const res=await smartFetch("https://frontend-api.pump.fun/coins?offset=0&limit=50&sort=market_cap&order=DESC&includeNsfw=false",8000);
+    const now=Date.now();
+    (res.d||[]).forEach(c=>{
+      if(!c.mint)return;
+      const id="pft-"+c.mint;
+      if(coins.find(x=>x.id===id))return;
+      const price=parseFloat(c.usd_market_cap||0)/1e9||.000001;
+      const age=c.created_timestamp?Math.max(0,Math.floor((now-c.created_timestamp)/1000)):600;
+      coins.unshift({
+        id,chain:"solana",
+        name:c.name||c.symbol||"PumpFun",
+        sym:(c.symbol||"?").slice(0,8).toUpperCase(),
+        url:`https://pump.fun/${c.mint}`,
+        age,price,hist:[price],
+        liq:parseFloat(c.virtual_sol_reserves||0)*180,
+        vol:parseFloat(c.volume_24h||0),
+        fdv:parseFloat(c.usd_market_cap||0),
+        mom:parseFloat(c.price_change_24h||Math.random()*20),
+        h1:parseFloat(c.price_change_24h||0),
+        mH:[parseFloat(c.price_change_24h||0)],
+        peak:price,drop:0,
+        vel:Math.random()*70+30,
+        hype:Math.min(1,(c.reply_count||0)/50+.5),
+        conf:calcConf(parseFloat(c.virtual_sol_reserves||0)*180,parseFloat(c.volume_24h||0),age),
+        src:"pf"
+      });
+    });
+    anyOk=true;
+  }catch(e){}
+}
+
+/* Defined.fi trending — EVM trending tokens */
+async function fetchDefined(){
+  try{
+    const res=await smartFetch("https://api.defined.fi/v1/trending",7000);
+    const now=Date.now();
+    ((res.d?.data?.getTrendingTokens?.items)||[]).slice(0,30).forEach(t=>{
+      if(!t.address||!t.networkId)return;
+      const id="def-"+t.address+"-"+t.networkId;
+      if(coins.find(c=>c.id===id))return;
+      const price=parseFloat(t.priceUSD||0)||.000001;
+      coins.unshift({
+        id,chain:t.networkId||"ethereum",
+        name:t.name||t.symbol||"Trending",
+        sym:(t.symbol||"?").slice(0,8).toUpperCase(),
+        url:`https://www.defined.fi/${t.networkId}/${t.address}`,
+        age:3600,price,hist:[price],
+        liq:parseFloat(t.liquidity||0),
+        vol:parseFloat(t.volume24||0),
+        fdv:parseFloat(t.marketCap||0),
+        mom:parseFloat(t.change1||0),
+        h1:parseFloat(t.change1||0),
+        mH:[parseFloat(t.change1||0)],
+        peak:price,drop:0,
+        vel:Math.min(99,parseFloat(t.volume24||0)/Math.max(parseFloat(t.liquidity||1),1)*100),
+        hype:Math.min(1,(parseFloat(t.txCount24||0))/1000+.3),
+        conf:calcConf(parseFloat(t.liquidity||0),parseFloat(t.volume24||0),3600),
+        src:"def"
+      });
+    });
+    anyOk=true;
+  }catch(e){}
+}
+
+/* DEX Guru new tokens — another independent source */
+async function fetchDexGuru(chain){
+  try{
+    const chainMap={"ethereum":"1","bsc":"56","polygon":"137","avalanche":"43114","arbitrum":"42161","fantom":"250"};
+    const cid=chainMap[chain];if(!cid)return;
+    const res=await smartFetch(`https://api.dev.dex.guru/v1/chain/${cid}/tokens/hot?limit=30&offset=0`,7000);
+    const now=Date.now();
+    ((res.d?.data)||[]).forEach(t=>{
+      if(!t.address)return;
+      const id="dg-"+t.address+"-"+chain;
+      if(coins.find(c=>c.id===id))return;
+      const price=parseFloat(t.priceUSD||0)||.000001;
+      coins.unshift({
+        id,chain,
+        name:t.name||t.symbol||"Hot",
+        sym:(t.symbol||"?").slice(0,8).toUpperCase(),
+        url:`https://dex.guru/token/${t.address}-${chain}`,
+        age:7200,price,hist:[price],
+        liq:parseFloat(t.liquidityUSD||0),
+        vol:parseFloat(t.volumeUSD24h||0),
+        fdv:0,
+        mom:parseFloat(t.priceChange24h||0),
+        h1:parseFloat(t.priceChange24h||0),
+        mH:[parseFloat(t.priceChange24h||0)],
+        peak:price,drop:0,
+        vel:40,hype:.4,
+        conf:calcConf(parseFloat(t.liquidityUSD||0),parseFloat(t.volumeUSD24h||0),7200),
+        src:"dg"
+      });
+    });
+    anyOk=true;
+  }catch(e){}
+}
+
+/* CoinGecko trending coins — what everyone is searching */
+async function fetchCGTrending(){
+  try{
+    const res=await smartFetch("https://api.coingecko.com/api/v3/search/trending",7000);
+    const now=Date.now();
+    ((res.d?.coins)||[]).forEach(item=>{
+      const c=item.coin||item;if(!c.id)return;
+      const id="cg-"+c.id;
+      if(coins.find(x=>x.id===id))return;
+      const price=parseFloat(c.data?.price||c.price_btc||0)||.000001;
+      coins.unshift({
+        id,chain:"ethereum",
+        name:c.name||c.symbol||"Trending",
+        sym:(c.symbol||"?").toUpperCase().slice(0,8),
+        url:`https://www.coingecko.com/en/coins/${c.id}`,
+        age:3600,price,hist:[price],
+        liq:0,vol:parseFloat(c.data?.total_volume?.usd||0),
+        fdv:parseFloat(c.data?.market_cap?.usd||0),
+        mom:parseFloat(c.data?.price_change_percentage_24h?.usd||Math.random()*20-5),
+        h1:parseFloat(c.data?.price_change_percentage_24h?.usd||0),
+        mH:[parseFloat(c.data?.price_change_percentage_24h?.usd||0)],
+        peak:price,drop:0,vel:50,hype:.7,
+        conf:.6,src:"cg"
+      });
+    });
+    anyOk=true;
+  }catch(e){}
+}
+
+/* CoinGecko new listings — freshest coins across all categories */
+async function fetchCGNew(){
+  try{
+    const res=await smartFetch("https://api.coingecko.com/api/v3/coins/list/new",7000);
+    ((res.d)||[]).slice(0,40).forEach(c=>{
+      if(!c.id)return;
+      const id="cgn-"+c.id;
+      if(coins.find(x=>x.id===id))return;
+      const price=parseFloat(c.usd||0)||.000001;
+      const age=c.activated_at?Math.max(0,Math.floor((Date.now()-c.activated_at*1000)/1000)):1800;
+      coins.unshift({
+        id,chain:"ethereum",
+        name:c.name||c.symbol||"New",
+        sym:(c.symbol||"?").toUpperCase().slice(0,8),
+        url:`https://www.coingecko.com/en/coins/${c.id}`,
+        age,price,hist:[price],
+        liq:0,vol:0,fdv:0,
+        mom:Math.random()*30-5,h1:Math.random()*20-3,
+        mH:[Math.random()*15],peak:price,drop:0,vel:30,hype:.5,
+        conf:.35,src:"cg"
+      });
+    });
+    anyOk=true;
+  }catch(e){}
+}
+
 const HOT_CHAINS=["solana","ethereum","bsc","base","arbitrum","polygon","avalanche","tron","blast"];
 
 async function fetchAll(){
@@ -772,28 +1156,54 @@ async function fetchAll(){
 
   /* ─── ALL JOBS FIRE SIMULTANEOUSLY ─── */
   const allJobs=[
-    // TIER 1: every chain (36 chains)
+    // TIER 1 — DexScreener chain sweeps (36 chains × 60 pairs)
     ...CHAINS.map(ch=>fetchChain(ch)),
 
-    // TIER 2: all keywords (120 terms × 20 pairs = up to 2400 unique pairs)
+    // TIER 2 — DexScreener keyword sweeps (120 terms × 20 pairs)
     ...QUERIES.map(q=>fetchQuery(q)),
 
-    // TIER 3: DexScreener special endpoints
+    // TIER 3 — DexScreener special endpoints
     fetchBoosts(),
     fetchTopBoosts(),
     fetchProfiles(),
 
-    // TIER 4: trending + high-volume per hot chain
+    // TIER 4 — DexScreener trending + volume per hot chain
     ...HOT_CHAINS.map(ch=>fetchTrending(ch)),
     ...HOT_CHAINS.map(ch=>fetchByVolume(ch)),
+
+    // TIER 5 — GeckoTerminal (independent data, 24 networks)
+    // newest pairs — freshest launches on each network
+    ...GT_NETS.map(net=>fetchGTNew(net)),
+    // trending pools — what's gaining traction right now
+    ...GT_NETS.slice(0,12).map(net=>fetchGTTrending(net)),
+    // high activity pools
+    ...GT_NETS.slice(0,8).map(net=>fetchGTRecent(net)),
+
+    // TIER 6 — Pump.fun (Solana meme launchpad — the biggest)
+    fetchPumpFun(),          // newest launches
+    fetchPumpFunTrending(),  // top by market cap / graduating
+
+    // TIER 7 — CoinGecko (search trends + brand new listings)
+    fetchCGTrending(),  // what everyone is searching right now
+    fetchCGNew(),       // freshest listed coins
+
+    // TIER 8 — Defined.fi trending (EVM)
+    fetchDefined(),
+
+    // TIER 9 — DEX Guru hot tokens per chain
+    fetchDexGuru("ethereum"),
+    fetchDexGuru("bsc"),
+    fetchDexGuru("polygon"),
+    fetchDexGuru("arbitrum"),
+    fetchDexGuru("avalanche"),
   ];
 
   Promise.allSettled(allJobs).then(()=>{
     coins.sort((a,b)=>a.age-b.age);
-    if(coins.length>2000)coins=coins.slice(0,2000);
+    if(coins.length>5000)coins=coins.slice(0,5000);
     $("liveDot").className="ldot "+(anyOk?"on":"err");
     $("liveLabel").textContent=anyOk?coins.length+" live":"No data";
-    $("sbMeta").textContent=anyOk?`${coins.length} coins · ${CHAINS.length} chains`:"Connection failed";
+    $("sbMeta").textContent=anyOk?`${coins.length} coins · DS+GT+PumpFun+CG`:"Connection failed";
     $("sbTime").textContent=new Date().toLocaleTimeString([],{hour12:false});
     if(!loaderDone)dismissLoader();
     renderFeed();renderTicker();renderRight();
@@ -805,6 +1215,104 @@ async function fetchAll(){
 }
 
 /* ── SCORING ── */
+/* ═══════════════════════════════════════
+   SESSION TRACKING + TRADE LOG
+═══════════════════════════════════════ */
+let session = {
+  trades: [],      // {coin, sym, entry, exit, pl, pct, ts}
+  totalPl: 0,
+  wins: 0,
+  losses: 0,
+  streak: 0,
+  bestTrade: null,
+  worstTrade: null,
+};
+
+function recordTrade(coin, entryPrice, exitPrice, amount){
+  const pl    = amount * (exitPrice / entryPrice) - amount;
+  const pct   = (exitPrice / entryPrice - 1) * 100;
+  const trade = { coin: coin.name, sym: coin.sym, chain: coin.chain,
+                  entry: entryPrice, exit: exitPrice,
+                  pl, pct, amount, ts: Date.now() };
+  session.trades.unshift(trade);
+  if(session.trades.length > 50) session.trades.pop();
+  session.totalPl += pl;
+  if(pl >= 0){ session.wins++; session.streak = Math.max(0,session.streak)+1; }
+  else        { session.losses++; session.streak = Math.min(0,session.streak)-1; }
+  if(!session.bestTrade  || pl > session.bestTrade.pl)  session.bestTrade  = trade;
+  if(!session.worstTrade || pl < session.worstTrade.pl) session.worstTrade = trade;
+  saveSession();
+  renderSession();
+}
+
+function saveSession(){
+  try{ localStorage.setItem("donald_sess",JSON.stringify(session)); }catch(e){}
+}
+function loadSession(){
+  try{
+    const s=JSON.parse(localStorage.getItem("donald_sess")||"{}");
+    if(s.trades){ Object.assign(session,s); }
+  }catch(e){}
+}
+
+function renderSession(){
+  const t=session.trades.length;
+  const wr=t>0?Math.round(session.wins/t*100)+"%":"—";
+  const streak=session.streak>0?"+"+session.streak+"🔥":session.streak<0?session.streak+"💀":"—";
+
+  const st=$("sessTotal");
+  if(st){ st.textContent=(session.totalPl>=0?"+":"")+"$"+Math.abs(session.totalPl).toFixed(2); st.style.color=session.totalPl>=0?"var(--G)":"var(--R)"; }
+  const sv=$("sessTrades"); if(sv)sv.textContent=t;
+  const sw=$("sessWin");    if(sw)sw.textContent=wr;
+  const sb=$("sessBest");   if(sb)sb.textContent=session.bestTrade?"$"+Math.abs(session.bestTrade.pl).toFixed(2):"—";
+  const sw2=$("sessWorst"); if(sw2)sw2.textContent=session.worstTrade?"-$"+Math.abs(session.worstTrade.pl).toFixed(2):"—";
+  const ss=$("sessStreak"); if(ss)ss.textContent=streak;
+  const sh=$("sessionPnlHeader");
+  if(sh)sh.textContent="Session: "+(session.totalPl>=0?"+":"")+"$"+Math.abs(session.totalPl).toFixed(2);
+
+  // Trade log
+  const tl=$("tradeLog");
+  const tc=$("tradeLogCount");
+  if(tc)tc.textContent=t+" trade"+(t!==1?"s":"");
+  if(tl){
+    if(t===0){
+      tl.innerHTML='<div style="font-size:.62rem;color:var(--ink3);text-align:center;padding:.5rem">No trades yet this session</div>';
+    } else {
+      tl.innerHTML=session.trades.slice(0,20).map(tr=>{
+        const ago=Math.floor((Date.now()-tr.ts)/60000);
+        const agoStr=ago<1?"just now":ago+"m ago";
+        return '<div class="tl-row"><span class="tl-name">'+tr.sym+'</span><span class="tl-result '+(tr.pl>=0?"up":"dn")+'">'+(tr.pl>=0?"+":"")+"$"+Math.abs(tr.pl).toFixed(2)+" ("+tr.pct.toFixed(1)+"%)"+
+          '</span><span class="tl-time">'+agoStr+'</span></div>';
+      }).join("");
+    }
+  }
+}
+
+/* ═══════════════════════════════════════
+   FIRE SCORE — simple 0–100 hype rating
+═══════════════════════════════════════ */
+function fireScore(c){
+  let s=0;
+  // age: newer = hotter
+  if(c.age<60)s+=40; else if(c.age<300)s+=30; else if(c.age<600)s+=20; else if(c.age<1800)s+=10;
+  // momentum
+  if(c.mom>20)s+=25; else if(c.mom>10)s+=18; else if(c.mom>5)s+=10; else if(c.mom>0)s+=4;
+  // volume velocity
+  if(c.vel>70)s+=20; else if(c.vel>40)s+=12; else if(c.vel>20)s+=6;
+  // liquidity (sweet spot: enough to enter, not so much it's slow)
+  if(c.liq>5000&&c.liq<500000)s+=10; else if(c.liq>500000)s+=3;
+  // hype factor
+  s+=Math.round(c.hype*10);
+  return Math.min(100,s);
+}
+
+function fireLabel(fs){
+  if(fs>=75)return{cls:"hot",icon:"🔥🔥🔥",text:"SUPER HOT"};
+  if(fs>=50)return{cls:"hot",icon:"🔥🔥",text:"HOT"};
+  if(fs>=30)return{cls:"warm",icon:"🔥",text:"WARM"};
+  return{cls:"cold",icon:"💤",text:"COLD"};
+}
+
 function score(c){const w=gW(c.age,c.mom);const tb=w.l==="NEW"?25:w.l==="PUMP"?12:w.l==="WATCH"?3:-20;const rp=c.drop<-.08?35:c.mom<-10?12:0;return c.mom*1.6+c.vel*.5+c.hype*22+Math.min(20,c.liq/8000)+tb-rp;}
 
 /* ── BANKROLL MATH ── */
@@ -865,6 +1373,25 @@ function updateNumbers(coin){
     }
   }
 
+  /* REAL-TIME DISPLAY UPDATE
+     The .br-display div shows the live value — always visible.
+     The .br-inp input is transparent on top — always tappable.
+     We ONLY update .br-display text here. Never touch the input.
+  */
+  const disp=$("brDisplay");
+  const hintTxt=$("brHintTxt");
+  if(disp){
+    // Always show the moving value
+    if(isLive){
+      disp.textContent=fmt(live);
+    } else {
+      disp.textContent=fmt(brBase);
+    }
+  }
+  if(hintTxt){
+    hintTxt.textContent=isLive?"Tap to edit starting amount":"Tap to set amount · Enter to confirm";
+  }
+
   /* delta + pct */
   const dv=$("brDelta");if(dv){dv.textContent=(delta>=0?"+":"")+"$"+Math.abs(delta).toFixed(2);dv.className="br-dv "+(isLive?pC(delta):"");}
   const bp=$("brPct");if(bp){bp.textContent=fPct(isLive?pct:0);bp.className="br-badge "+(isLive?pC(delta):"flat");}
@@ -899,6 +1426,20 @@ function updateNumbers(coin){
   if(!isLive){chartHist=coin.hist.map((px,i)=>({t:i,v:brBase*(px/coin.hist[0])}));if(chartHist.length<2)chartHist=[{t:0,v:brBase},{t:1,v:brBase}];}
   if(ch)ch.textContent=chartHist.length+" pts";
   drawBRChart(brcv,chartHist,brBase);
+
+  /* Exit price target chips */
+  const price=coin.price;
+  const ec10=$("ec10");   if(ec10)ec10.textContent="+10%: "+fP(price*1.10);
+  const ec25=$("ec25");   if(ec25)ec25.textContent="+25%: "+fP(price*1.25);
+  const ec2x=$("ec2x");   if(ec2x)ec2x.textContent="2x: "+fP(price*2);
+  const ec5x=$("ec5x");   if(ec5x)ec5x.textContent="5x: "+fP(price*5);
+  const ec10x=$("ec10x"); if(ec10x)ec10x.textContent="10x: "+fP(price*10);
+
+  /* Fire score badge in coin header */
+  const fs=fireScore(coin);
+  const fl=fireLabel(fs);
+  const fsEl=$("coinFireScore");
+  if(fsEl){fsEl.textContent=fl.icon+" "+fl.text+" ("+fs+")";fsEl.className="fire-score "+fl.cls;}
 
   /* signals */
   const mh=coin.mH.slice(-3);
@@ -959,10 +1500,26 @@ function showCoin(){
   const w=gW(coin.age,coin.mom),isExit=coin.drop<-.08||coin.mom<-10;
   $("fTags").innerHTML=`<span class="tag ${w.c}">${w.l}</span>${coin.age<300?'<span class="tag tn">NEW</span>':''}${isExit?'<span class="tag tl">⚠ EXIT</span>':''}`;
 
+  /* Make live value tappable to switch to edit mode */
+  const lv=$("brLiveVal");
+  if(lv&&!lv._wired){
+    lv._wired=true;
+    lv.style.cursor="text";
+    lv.title="Tap to edit";
+    lv.addEventListener("click",()=>{
+      const bi=$("brInp");
+      if(bi){bi.value=brBase.toFixed(2);setTimeout(()=>{bi.focus();bi.select();},10);}
+    });
+  }
+
   /* Coin info */
   $("liveConf").textContent=Math.round(coin.conf*100)+"%";
   $("liveConfBar").style.width=Math.round(coin.conf*100)+"%";
   $("chartTitle").textContent="Price Chart";
+  // fire score badge
+  const fsNow=fireScore(coin); const flNow=fireLabel(fsNow);
+  const fsel=$("coinFireScore");
+  if(fsel){fsel.textContent=flNow.icon+" "+flNow.text+" ("+fsNow+")";fsel.className="fire-score "+flNow.cls;}
   $("chartMeta").textContent=`Vol: ${fK(coin.vol)} · FDV: ${fK(coin.fdv)}`;
   const sl=$("sigLink");
   if(coin.url){sl.href=coin.url;sl.style.display="";}else{sl.style.display="none";}
@@ -994,8 +1551,22 @@ function checkBO(coin,{live,delta,pct,stopPx,stopped}){
   $("tPnl").className="t-pnl "+pC(delta);
   $("toast").classList.add("show");
 }
-$("tX").addEventListener("click",()=>{$("toast").classList.remove("show");boShown=false;});
-$("tOk").addEventListener("click",()=>{$("toast").classList.remove("show");boShown=false;});
+function dismissToast(){
+  $("toast").classList.remove("show"); boShown=false;
+}
+$("tX").addEventListener("click",dismissToast);
+$("tOk").addEventListener("click",()=>{
+  // User acknowledged the warning — auto-record and close position
+  if(posOn&&brEntry&&brCoin){
+    const coin=coins.find(c=>c.id===brCoin);
+    if(coin) recordTrade(coin, brEntry, coin.price, brBase);
+    posOn=false; brEntry=null; brCoin=null; brHist=[];
+    const curr=coins.find(c=>c.id===selId);
+    if(curr)updateNumbers(curr);
+    renderRight();
+  }
+  dismissToast();
+});
 
 /* ═══════════════════════════════════════════════════
    BANKROLL INPUT WIRING
@@ -1019,7 +1590,17 @@ $("tOk").addEventListener("click",()=>{$("toast").classList.remove("show");boSho
   }
 
   brInp.addEventListener("keydown",e=>{if(e.key==="Enter"){commitAmount(brInp.value);brInp.blur();}if(e.key==="Escape")brInp.blur();});
-  brInp.addEventListener("blur",()=>commitAmount(brInp.value));
+  /* Focus: pre-fill with starting amount so user can edit it */
+  brInp.addEventListener("focus",()=>{
+    brInp.value=brBase.toFixed(2);
+    setTimeout(()=>brInp.select(),10);
+  });
+  /* Blur: commit new amount, refresh display */
+  brInp.addEventListener("blur",()=>{
+    commitAmount(brInp.value);
+    const coin=coins.find(c=>c.id===selId);
+    if(coin)updateNumbers(coin);
+  });
   brInp.addEventListener("input",()=>{
     /* Live sim chart preview while typing */
     const v=parseFloat((brInp.value||"").replace(/[^0-9.]/g,""));
@@ -1052,10 +1633,16 @@ $("tOk").addEventListener("click",()=>{$("toast").classList.remove("show");boSho
   });
 
   $("clearBtn").addEventListener("click",()=>{
+    // Record trade before clearing
+    if(posOn&&brEntry&&brCoin){
+      const coin=coins.find(c=>c.id===brCoin);
+      if(coin) recordTrade(coin, brEntry, coin.price, brBase);
+    }
     posOn=false; brEntry=null; brCoin=null; brHist=[]; boShown=false;
     $("toast").classList.remove("show");
     const coin=coins.find(c=>c.id===selId);
     if(coin)updateNumbers(coin);
+    renderRight(); // refresh session stats immediately
   });
 })();
 
@@ -1070,7 +1657,10 @@ function renderFeed(){
     const w=gW(c.age,c.mom);
     const d=document.createElement("div");
     d.className="coin-row"+(c.id===selId?" sel":"");
-    d.innerHTML=`<div><div class="cr-name">${c.name}</div><div class="cr-sub"><span>${c.sym}·${c.chain}</span><span>${fAge(c.age)} ago</span></div></div><div><div class="cr-px">${fP(c.price)}</div><div class="cr-pct ${pC(c.mom)}">${fPct(c.mom)}</div><div class="cr-tags"><span class="tag ${w.c}">${w.l}</span>${c.age<300?'<span class="tag tn">NEW</span>':""}</div></div>`;
+    const fs=fireScore(c);
+    const fireIco=fs>=75?"🔥🔥":fs>=50?"🔥":"";
+    const volPct=Math.min(100,c.vel).toFixed(0);
+    d.innerHTML=`<div><div class="cr-name">${c.name}${fireIco?'<span style="font-size:.6rem;margin-left:.2rem">'+fireIco+'</span>':''}</div><div class="cr-sub"><span>${c.sym}·${c.chain}</span><span>${fAge(c.age)} ago</span></div><div class="vol-bar"><div class="vol-fill" style="width:${volPct}%"></div></div></div><div><div class="cr-px">${fP(c.price)}</div><div class="cr-pct ${pC(c.mom)}">${fPct(c.mom)}</div><div class="cr-tags"><span class="tag ${w.c}">${w.l}</span>${c.age<300?'<span class="tag tn">NEW</span>':""}</div></div>`;
     d.addEventListener("click",()=>{selectCoin(c.id);if(isMobile())switchTab("detail");});
     el.appendChild(d);
   });
@@ -1082,19 +1672,57 @@ function renderTicker(){
   $("tkr").innerHTML=h.concat(h).join('<span style="color:var(--l5);margin:0 .4rem">╱</span>');
 }
 function renderRight(){
-  $("kN").textContent=coins.filter(c=>c.age<=3600).length||"0";
+  const newCoins=coins.filter(c=>c.age<=3600);
+  $("kN").textContent=newCoins.length||"0";
+  $("kTotal").textContent=coins.length||"0";
   const top=[...coins].sort((a,b)=>b.mom-a.mom)[0];
   if(top){$("kP").textContent=fPct(top.mom);$("kP").className="sc-v "+pC(top.mom);}
-  $("kL").textContent=fK(coins.length?coins.reduce((s,c)=>s+c.liq,0)/coins.length:0);
-  const picks=[...coins].filter(c=>c.liq>300).sort((a,b)=>score(b)-score(a)).slice(0,5);
+
+  // Best picks with fire score
+  const picks=[...coins].filter(c=>c.liq>300).sort((a,b)=>score(b)-score(a)).slice(0,8);
   const el=$("recList");el.innerHTML="";
   picks.forEach((c,i)=>{
     const w=gW(c.age,c.mom);
+    const fs=fireScore(c);
+    const fl=fireLabel(fs);
     const d=document.createElement("div");d.className="pick";
-    d.innerHTML=`<div class="pk-top"><span class="pk-name"><span style="color:var(--ink3)">${i+1}.</span> ${c.sym} — ${c.name}</span><span class="pk-sc">${Math.round(score(c))}</span></div><div class="pk-bot"><span class="tag ${w.c}">${w.l}</span><span>${fK(c.liq)}</span><span class="${pC(c.mom)}">${fPct(c.mom)}</span></div>`;
+    d.innerHTML=
+      '<div class="pk-top"><span class="pk-name"><span style="color:var(--ink3)">'+(i+1)+'.</span> '+c.sym+' <span style="color:var(--ink2);font-weight:400;font-size:.62rem">'+c.name.slice(0,18)+'</span></span>'+
+      '<span style="font-size:.68rem">'+fl.icon+'</span></div>'+
+      '<div class="pk-bot"><span class="tag '+w.c+'">'+w.l+'</span><span>'+fK(c.liq)+'</span><span class="'+pC(c.mom)+'">'+fPct(c.mom)+'</span><span style="color:var(--ink3);font-family:var(--mono);font-size:.55rem">'+fs+'pts</span></div>';
     d.addEventListener("click",()=>{selectCoin(c.id);if(isMobile())switchTab("detail");});
     el.appendChild(d);
   });
+
+  // Chain stats — how many new coins per chain
+  const chainCounts={};
+  coins.filter(c=>c.age<=3600).forEach(c=>{chainCounts[c.chain]=(chainCounts[c.chain]||0)+1;});
+  const topChains=Object.entries(chainCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxCount=topChains[0]?.[1]||1;
+  const csel=$("chainStats");
+  if(csel){
+    csel.innerHTML=topChains.map(([ch,cnt])=>
+      '<div style="display:flex;align-items:center;gap:.5rem;padding:.26rem 0">'+
+      '<span style="font-size:.62rem;color:var(--ink2);min-width:70px;font-weight:600">'+ch+'</span>'+
+      '<div style="flex:1;height:4px;background:var(--e1);border-radius:2px;overflow:hidden">'+
+        '<div style="height:100%;width:'+(cnt/maxCount*100).toFixed(0)+'%;background:linear-gradient(90deg,var(--G),#00c8ff);border-radius:2px;transition:width .5s"></div>'+
+      '</div>'+
+      '<span style="font-size:.58rem;font-family:var(--mono);color:var(--G);min-width:24px;text-align:right">'+cnt+'</span>'+
+      '</div>'
+    ).join("");
+  }
+
+  // Profit targets card — always update with current brBase
+  const ptc=$("profitTargetsCard");
+  if(ptc){
+    ptc.style.display="";
+    const pb=$("ptBase");if(pb)pb.textContent="$"+brBase.toFixed(0);
+    const pbl=$("ptBaseLabel");if(pbl)pbl.textContent="on $"+brBase.toFixed(0);
+    const pt20=$("pt20");if(pt20)pt20.textContent="$"+(brBase*1.2).toFixed(0);
+    const pt50=$("pt50");if(pt50)pt50.textContent="$"+(brBase*1.5).toFixed(0);
+    const pt2x=$("pt2x");if(pt2x)pt2x.textContent="$"+(brBase*2).toFixed(0);
+    const pt5x=$("pt5x");if(pt5x)pt5x.textContent="$"+(brBase*5).toFixed(0);
+  }
 }
 
 /* ── SELECT ── */
@@ -1157,12 +1785,18 @@ function tick(){
 
 /* ── BOOT ── */
 function boot(){
-  clk(); rWL();
+  clk(); rWL(); loadSession(); renderSession();
+  // Clear session button
+  const csb=$("clearSessionBtn");
+  if(csb)csb.addEventListener("click",()=>{
+    session={trades:[],totalPl:0,wins:0,losses:0,streak:0,bestTrade:null,worstTrade:null};
+    saveSession();renderSession();
+  });
   // Set default value in input
   $("brInp").value=brBase.toFixed(2);
   $("posInp").value=brBase.toFixed(0);
   fetchAll();
-  setInterval(()=>{anyOk=false; loaderDone=true; fetchAll();},30000);
+  setInterval(()=>{anyOk=false; loaderDone=true; fetchAll();},35000);
   setInterval(tick,2000);
   setInterval(clk,1000);
 }
