@@ -1501,12 +1501,11 @@ function showCoin(){
   $("fTags").innerHTML=`<span class="tag ${w.c}">${w.l}</span>${coin.age<300?'<span class="tag tn">NEW</span>':''}${isExit?'<span class="tag tl">⚠ EXIT</span>':''}`;
 
   /* Make live value tappable to switch to edit mode */
-  const lv=$("brLiveVal");
-  if(lv&&!lv._wired){
-    lv._wired=true;
-    lv.style.cursor="text";
-    lv.title="Tap to edit";
-    lv.addEventListener("click",()=>{
+  const bz=$("brZone");
+  if(bz&&!bz._wired){
+    bz._wired=true;
+    bz.title="Tap to edit";
+    bz.addEventListener("click",()=>{
       const bi=$("brInp");
       if(bi){bi.value=brBase.toFixed(2);setTimeout(()=>{bi.focus();bi.select();},10);}
     });
@@ -1529,6 +1528,9 @@ function showCoin(){
   if(inp&&!inp.matches(":focus"))inp.value=brBase.toFixed(2);
   const pi=$("posInp");
   if(pi&&!pi.matches(":focus"))pi.value=brBase.toFixed(0);
+  // Set initial display value
+  const disp=$("brDisplay");
+  if(disp)disp.textContent=fmt(brBase);
 
   /* Draw charts */
   requestAnimationFrame(()=>{
@@ -1586,6 +1588,8 @@ $("tOk").addEventListener("click",()=>{
       if(!posInp.matches(":focus"))posInp.value=v.toFixed(0);
       if(posOn&&brCoin)brHist=[{t:Date.now(),v:brBase}];
       const s1=$("bsSt");if(s1)s1.textContent="$"+v.toFixed(0);
+      // Update display immediately when not in position
+      if(!posOn){const d=$("brDisplay");if(d)d.textContent=fmt(v);}
     }
   }
 
